@@ -3,18 +3,6 @@ import random
 import numpy as np
 from numpy import linalg as LA
 
-A = np.array([[3,1],
-              [1,2]])
-B = np.array([9,8])
-x = np.linalg.solve(A, B)
-# print(x)
-
-
-# p1= np.array(
-#     [[0.9, 0.1],
-#      [0.2, 0.8]]
-#             )
-
 p1 = np.array(
     [[0.1, 0.6, 0.3],
      [0.2, 0.2, 0.6],
@@ -24,9 +12,9 @@ p2 = LA.matrix_power(p1, 2)
 
 p_steady = LA.matrix_power(p1, 2000)
 
-print(p1)
-print(p2)
-print(p_steady)
+print("p1", p1)
+print("p2", p2)
+print("p_steady", p_steady)
 
 s = "B"
 for i in range(100):

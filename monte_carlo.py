@@ -38,11 +38,10 @@ print(np.mean(Q))
 print(np.var(Q))
 print(np.std(Q))
 
-print("Q >= 25", len([x for x in Q_ if x >= 25.]) / N)
-print("Q >= 31", len([x for x in Q_ if x >= 31.]) / N)
-print("Q >= 50", len([x for x in Q_ if x >= 50.]) / N)
+print("Prob{Q >= 25} = ", len([x for x in Q_ if x >= 25.]) / N)
+print("Prob{Q >= 31} = ", len([x for x in Q_ if x >= 31.]) / N)
+print("Prob{Q >= 50} = ", len([x for x in Q_ if x >= 50.]) / N)
 
-# rr=range=np.arange(min(Q),max(Q))
 plt.hist(Q, bins=100, label="Cv=%f" % cv[0], fc=(0, 0, 1, 0.5))
 
 plt.xlabel("Q")
