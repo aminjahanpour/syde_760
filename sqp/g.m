@@ -1,3 +1,3 @@
-          function ge = g (x)
-            ge = [x(2)+1];       
-          endfunction
+function ge = g (x)
+ge =[x(2) + 1];
+endfunction

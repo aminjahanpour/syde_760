@@ -16,7 +16,6 @@ f = 3.41*crude + 19*pg-0.25*(sf1*csf+su1*csu)-...
                         .5*(sf2*csf+su2*csu)-...
                       0.25*(sf3*csf+su3*csu);
 
-
 f = -f; %for maximization
 
 

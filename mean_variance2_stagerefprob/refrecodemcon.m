@@ -1,5 +1,6 @@
 %Refiner slp for a small illustrative problem
 function[g, geq] = refrecodemcon(x)
+
 crude = x(1);
 pg = x(2);
 sf1 = x(3);
