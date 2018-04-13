@@ -8,6 +8,7 @@ p1 = np.array(
      [0.2, 0.2, 0.6],
      [0.4, 0.4, 0.2]])
 
+
 p2 = LA.matrix_power(p1, 2)
 
 p_steady = LA.matrix_power(p1, 2000)
