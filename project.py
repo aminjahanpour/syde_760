@@ -21,21 +21,59 @@ Your method is simulation-optimization and the minimum number of scenarios expec
 """
 
 import numpy as np
-from scipy.optimize import minimize
+from scipy.optimize import linprog
 
 
-def eval(x):
-    u1 = x[0]
-    u2 = x[1]
-    u3 = x[2]
-    s1 = x[3]
-    s2 = x[4]
-    s3 = x[5]
+def lp_solve(S1 = 2, I = 5):
 
-    return -(2 * (u1 + u2 + u3) + (s1 + s2 + s3))
+    #    ut, sf1,  su1,  sf2, su2, sf3,  su3
+    c = [-2, 0.25, 0.25, 0.5, 0.5, 0.25, 0.25]
 
 
-initial_solution = -2 + (2 + 2) * np.random.random()
+    """
+    inequality const:
+    
+    Ut - St <= It  -->  1 * Ut <= It + St
+    Ut >= 0        --> -1 * Ut <= 0
+    """
 
-ans = minimize(eval, initial_solution, method='nelder-mead', options={'maxiter': 1000, 'xtol': 1e-8, 'disp': True})
-print(ans)
+    A_ub = [
+        [1,  0, 0, 0, 0, 0, 0],
+        [-1, 0, 0, 0, 0, 0, 0]
+    ]
+
+
+    b_ub = [I+S1,
+            0
+            ]
+
+
+    """
+    equality constraints:
+    
+    I_t+SF1-SU1=5  -->  SF1 - SU1 = 5 - I_t
+    I_t+SF2-SU2=6  -->  SF2 - SU2 = 6 - I_t
+    I_t+SF3-SU3=7  -->  SF3 - SU3 = 7 - I_t
+    
+    
+    """
+    A_eq = [
+        [0, 1, -1, 0, 0, 0, 0],
+        [0, 0, 0, 1, -1, 0, 0],
+        [0, 0, 0, 0, 0, 1, -1]
+        ]
+
+    b_eq = [5 - I,
+            6 - I,
+            7 - I
+            ]
+
+    no_bounds = (-100, 100)
+
+
+
+    res = linprog(c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=len(c)*[no_bounds], options={"disp": True})
+    print(res)
+    return(res['x'][0])
+
+print (lp_solve(S1 = 2, I = 5))
