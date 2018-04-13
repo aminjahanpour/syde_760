@@ -24,7 +24,7 @@ import numpy as np
 from scipy.optimize import linprog
 
 
-def lp_solve(S1 = 2, I = 5):
+def lp_solve(s_init, inflow):
 
     #    ut, sf1,  su1,  sf2, su2, sf3,  su3
     c = [-2, 0.25, 0.25, 0.5, 0.5, 0.25, 0.25]
@@ -43,7 +43,7 @@ def lp_solve(S1 = 2, I = 5):
     ]
 
 
-    b_ub = [I+S1,
+    b_ub = [inflow + s_init,
             0
             ]
 
@@ -63,17 +63,44 @@ def lp_solve(S1 = 2, I = 5):
         [0, 0, 0, 0, 0, 1, -1]
         ]
 
-    b_eq = [5 - I,
-            6 - I,
-            7 - I
+    b_eq = [5 - inflow,
+            6 - inflow,
+            7 - inflow
             ]
 
     no_bounds = (-100, 100)
 
 
 
-    res = linprog(c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=len(c)*[no_bounds], options={"disp": True})
-    print(res)
+    res = linprog(c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=len(c)*[no_bounds])
+    # print(res)
     return(res['x'][0])
 
-print (lp_solve(S1 = 2, I = 5))
+"""
+let's assume for t=1:
+S1 = 2
+I1 = 5
+"""
+S_1 = 2
+I_1 = 6
+
+u_1 = lp_solve(s_init=S_1, inflow=I_1)
+print("t=1", S_1, I_1, u_1)
+
+"""
+t=2
+"""
+S_2 = S_1 + I_1 - u_1
+I_2 = 9
+
+u_2 = lp_solve(s_init=S_2, inflow=I_2)
+print("t=2", S_2, I_2, u_2)
+
+"""
+t=3
+"""
+S_3 = S_2 + I_2 - u_2
+I_3 = 7
+
+u_3 = lp_solve(s_init=S_3, inflow=I_3)
+print("t=3", S_3, I_3, u_3)
