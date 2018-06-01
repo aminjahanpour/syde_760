@@ -24,10 +24,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def cvar_obj(u):
-    cv = 0.5
+def cvar_obj(u, alfa, cv, N):
     inflows = np.array(
-        [np.random.normal(6, 6 * cv, 1000), np.random.normal(9, 9 * cv, 1000), np.random.normal(7, 7 * cv, 1000)]).T
+        [np.random.normal(6, 6 * cv, N), np.random.normal(9, 9 * cv, N), np.random.normal(7, 7 * cv, N)]).T
     f = []
     for I in inflows:
         S = [2, 0, 0, 0]
@@ -39,7 +38,6 @@ def cvar_obj(u):
 
         f.append(2 * (u[0] + u[1] + u[2]) + (S[1] + S[2] + S[3]))
     f.sort()
-    alfa = 0.1
 
     min_f = min(f)
     max_f = max(f)
@@ -56,10 +54,40 @@ def cvar_obj(u):
     return var_a, cvar_a, f
 
 
-var_a, cvar_a, f = cvar_obj([2, 2, 2])
 
-print("var_a = %6.3f, cvar_a = %6.3f" % (var_a, cvar_a))
+if __name__ == '__main__':
 
-plt.hist(f)
-plt.scatter([var_a, cvar_a], [0, 0], c='r')
-plt.show()
+    N=1000000
+    alfa = 0.1
+    cv = 0.5
+
+    var_a, cvar_a, f = cvar_obj([2, 2, 2] , alfa, cv, N)
+
+    print("alfa=%6.3f,   var_a=%6.3f,   cvar_a=%6.3f" % (var_a, cvar_a, alfa))
+
+
+
+    fig = plt.figure()
+    fig.suptitle('bold figure suptitle', fontsize=14, fontweight='bold')
+
+    ax = fig.add_subplot(111)
+    fig.subplots_adjust(top=0.85)
+    ax.set_title('axes title')
+
+    ax.set_xlabel('Z')
+    ax.set_ylabel('Frequency')
+
+    # ax.text(3, 8, 'boxed italics text in data coords', style='italic',
+    #         bbox={'facecolor':'red', 'alpha':0.5, 'pad':10})
+
+    ax.text(var_a, -12, r'$VaR_a$', fontsize=10)
+    ax.text(cvar_a-4, -12, r'$CVaR_a$', fontsize=10)
+
+
+
+    plt.hist(f)
+    plt.scatter([var_a, cvar_a], [0, 0], c='r')
+
+    # plt.xlabel("")
+    # plt.ylabel("")
+    plt.show()
