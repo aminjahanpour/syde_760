@@ -25,12 +25,10 @@ for each alpha,
     obtaine the optimum DV.
     mean, std = For that DV, obtain mean and std of objectivefunction
     plot mean, std
-    
-    
 """
 
+import cma
 import numpy as np
-from scipy.optimize import minimize
 
 
 def cvar_obj(u):
@@ -39,13 +37,15 @@ def cvar_obj(u):
     f = []
     for I in inflows:
         S = [2, 0, 0, 0]
-        S = [S[0],
-             S[0] + I[0] - u[0],  # S[1]
-             S[1] + I[1] - u[1],  # S[2]
-             S[2] + I[2] - u[2],  # S[3]
-             ]
 
-        f.append(2 * (u[0] + u[1] + u[2]) + (S[1] + S[2] + S[3]))
+        S[0] = 2
+        S[1] = S[0] + I[0] - u[0]  # S[1]
+        S[2] = S[1] + I[1] - u[1]  # S[2]
+        S[3] = S[2] + I[2] - u[2]  # S[3]
+
+        if all([0 < x < 6 for x in S]):
+            f.append(2 * (u[0] + u[1] + u[2]) + (S[1] + S[2] + S[3]))
+
     f.sort()
 
     min_f = min(f)
@@ -53,7 +53,8 @@ def cvar_obj(u):
 
     var_a = 0
 
-    for i in np.arange(min_f, max_f, 0.001):
+    frange = np.arange(min_f, max_f, 0.01)
+    for i in frange:
         if (i - min_f) / (max_f - min_f) > alfa:
             var_a = i
             break
@@ -66,64 +67,63 @@ def cvar_obj(u):
 
 
 if __name__ == '__main__':
-    N = 1000
+    N = 10000
     cv = 0.5
     alfa = 0.1
-    budget = 1000
-    # cvar_a = cvar_obj([2, 2, 2] , alfa, cv, N)
+    budget = 10000
 
     initial_solution = np.array([3, 3, 3])
 
-    # ans = NelderMeadSimplexSearch.minimize(cvar_obj, initial_solution, max_iterations=budget)
-
-    # And variables must be positive, hence the following bounds:
     bnds = ((0, 6), (0, 6), (0, 6))
 
-    ans2 = minimize(cvar_obj, initial_solution, method='L-BFGS-B', bounds=bnds,
-                    options={'maxiter': budget, 'disp': True})
+    es = cma.CMAEvolutionStrategy(initial_solution, 0.5, {'bounds': [0, 6]})
+    ans = es.optimize(cvar_obj, maxfun=budget)
 
-    print(ans2)
+    print("_____________________")
+    print(ans.best.f)
+    print([round(xx, 4) for xx in ans.best.x])
+
+    # print(['#']*50)
+    #
+    # ans = NelderMeadSimplexSearch.minimize(cvar_obj, initial_solution, max_iterations=budget, bounds=bnds)
+    # print(ans)
+
+    #
+    #
+    # ans2 = minimize(cvar_obj, initial_solution,  bounds=bnds,
+    #                 options={'maxiter': budget, 'disp': True})
+    # print(ans2)
+
+    """
+    simulation
+    """
+
+    # cvar_a = cvar_obj([2, 2, 2] , alfa, cv, N)
+
+
     # print("alfa=%6.3f,   var_a=%6.3f,   cvar_a=%6.3f" % (alfa, var_a, cvar_a, ))
 
-    """
-    >>> cons = ({'type': 'ineq', 'fun': lambda x:  x[0] - 2 * x[1] + 2},
-    ...         {'type': 'ineq', 'fun': lambda x: -x[0] - 2 * x[1] + 6},
-    ...         {'type': 'ineq', 'fun': lambda x: -x[0] + 2 * x[1] + 2})
-
-
-    The optimization problem is solved using the SLSQP method as:
-
-    >>> res = minimize(fun, (2, 0), method='SLSQP', bounds=bnds,
-    ...                constraints=cons)
-
-    It should converge to the theoretical solution (1.4 ,1.7).
-
-
-
-
-
-    fig = plt.figure()
-    fig.suptitle('bold figure suptitle', fontsize=14, fontweight='bold')
-
-    ax = fig.add_subplot(111)
-    fig.subplots_adjust(top=0.85)
-    ax.set_title('axes title')
-
-    ax.set_xlabel('Z')
-    ax.set_ylabel('Frequency')
-
-    # ax.text(3, 8, 'boxed italics text in data coords', style='italic',
-    #         bbox={'facecolor':'red', 'alpha':0.5, 'pad':10})
-
-    ax.text(var_a, -12, r'$VaR_a$', fontsize=10)
-    ax.text(cvar_a-4, -12, r'$CVaR_a$', fontsize=10)
-
-
-
-    plt.hist(f)
-    plt.scatter([var_a, cvar_a], [0, 0], c='r')
-
-    # plt.xlabel("")
-    # plt.ylabel("")
-    plt.show()
-    """
+    # fig = plt.figure()
+    # fig.suptitle('bold figure suptitle', fontsize=14, fontweight='bold')
+    #
+    # ax = fig.add_subplot(111)
+    # fig.subplots_adjust(top=0.85)
+    # ax.set_title('axes title')
+    #
+    # ax.set_xlabel('Z')
+    # ax.set_ylabel('Frequency')
+    #
+    # # ax.text(3, 8, 'boxed italics text in data coords', style='italic',
+    # #         bbox={'facecolor':'red', 'alpha':0.5, 'pad':10})
+    #
+    # ax.text(var_a, -12, r'$VaR_a$', fontsize=10)
+    # ax.text(cvar_a-4, -12, r'$CVaR_a$', fontsize=10)
+    #
+    #
+    #
+    # plt.hist(f)
+    # plt.scatter([var_a, cvar_a], [0, 0], c='r')
+    #
+    # # plt.xlabel("")
+    # # plt.ylabel("")
+    # plt.show()
