@@ -124,6 +124,14 @@ def plot_hist(var_a, cvar_a, f):
     plt.show()
 
 if __name__ == '__main__':
+
+    fig = plt.figure()
+    fig.suptitle('bold figure suptitle', fontsize=14, fontweight='bold')
+
+    ax = fig.add_subplot(111)
+
+
+
     N = 100000
     cv = 0.5
     alfa = 0.2
@@ -132,18 +140,23 @@ if __name__ == '__main__':
     means_res = []
     std_res = []
 
-    for alfa in [0.05, 0.1, 0.15, 0.2, 0.25]:
+    for alfa in [0.05, 0.1]:
         dv_opt, f_opt = optimization()
 
-        # print(alfa, cv, '_____________')
-        # print(dv_opt, f_opt)
         var_a, cvar_a, f = cvar_obj(dv_opt, simu=True)
 
+        x = np.mean(f)
+        y = np.std(f)
+
         print("cv=%4.2f, alfa=%6.3f, var_a=%6.3f, cvar_a=%6.3f, len:%i mean:%6.3f std:%6.3f" % (
-            cv, alfa, var_a, cvar_a, len(f), np.mean(f), np.std(f)), dv_opt, f_opt)
+            cv, alfa, var_a, cvar_a, len(f), x, y), dv_opt, f_opt)
 
-        means_res.append(np.mean(f))
-        std_res.append(np.std(f))
+        means_res.append(x)
+        std_res.append(y)
 
-    plt.scatter(x=means_res, y=std_res)
+        ax.text(x, y, alfa)
+
+        plt.scatter(x=x, y=y)
+
+
     plt.show()
