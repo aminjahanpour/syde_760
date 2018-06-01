@@ -53,7 +53,7 @@ def cvar_obj(u):
 
     var_a = 0
 
-    frange = np.arange(min_f, max_f, 0.01)
+    frange = np.arange(min_f, max_f, 0.001)
     for i in frange:
         if (i - min_f) / (max_f - min_f) > alfa:
             var_a = i
