@@ -20,11 +20,20 @@ Your method is simulation-optimization and the minimum number of scenarios expec
 
 """
 
-import matplotlib.pyplot as plt
+"""
+for each alpha,
+    obtaine the optimum DV.
+    mean, std = For that DV, obtain mean and std of objectivefunction
+    plot mean, std
+    
+    
+"""
+
 import numpy as np
+from scipy.optimize import minimize
 
 
-def cvar_obj(u, alfa, cv, N):
+def cvar_obj(u):
     inflows = np.array(
         [np.random.normal(6, 6 * cv, N), np.random.normal(9, 9 * cv, N), np.random.normal(7, 7 * cv, N)]).T
     f = []
@@ -51,19 +60,45 @@ def cvar_obj(u, alfa, cv, N):
 
     cvar_a = np.mean([x for x in f if x <= var_a])
 
-    return var_a, cvar_a, f
+    # return var_a, cvar_a, f
+    return cvar_a
 
 
 
 if __name__ == '__main__':
-
-    N=1000000
-    alfa = 0.1
+    N = 1000
     cv = 0.5
+    alfa = 0.1
+    budget = 1000
+    # cvar_a = cvar_obj([2, 2, 2] , alfa, cv, N)
 
-    var_a, cvar_a, f = cvar_obj([2, 2, 2] , alfa, cv, N)
+    initial_solution = np.array([3, 3, 3])
 
-    print("alfa=%6.3f,   var_a=%6.3f,   cvar_a=%6.3f" % (var_a, cvar_a, alfa))
+    # ans = NelderMeadSimplexSearch.minimize(cvar_obj, initial_solution, max_iterations=budget)
+
+    # And variables must be positive, hence the following bounds:
+    bnds = ((0, 6), (0, 6), (0, 6))
+
+    ans2 = minimize(cvar_obj, initial_solution, method='L-BFGS-B', bounds=bnds,
+                    options={'maxiter': budget, 'disp': True})
+
+    print(ans2)
+    # print("alfa=%6.3f,   var_a=%6.3f,   cvar_a=%6.3f" % (alfa, var_a, cvar_a, ))
+
+    """
+    >>> cons = ({'type': 'ineq', 'fun': lambda x:  x[0] - 2 * x[1] + 2},
+    ...         {'type': 'ineq', 'fun': lambda x: -x[0] - 2 * x[1] + 6},
+    ...         {'type': 'ineq', 'fun': lambda x: -x[0] + 2 * x[1] + 2})
+
+
+    The optimization problem is solved using the SLSQP method as:
+
+    >>> res = minimize(fun, (2, 0), method='SLSQP', bounds=bnds,
+    ...                constraints=cons)
+
+    It should converge to the theoretical solution (1.4 ,1.7).
+
+
 
 
 
@@ -91,3 +126,4 @@ if __name__ == '__main__':
     # plt.xlabel("")
     # plt.ylabel("")
     plt.show()
+    """
