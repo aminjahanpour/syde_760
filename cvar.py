@@ -84,7 +84,7 @@ def optimization():
     initial_solution = np.array([3, 3, 3])
 
     es = cma.CMAEvolutionStrategy(initial_solution, 0.5, {'bounds': [0, 6]})
-    ans = es.optimize(cvar_obj, maxfun=budget)
+    ans = es.optimize(cvar_obj, maxfun=budget, verb_disp=0)
 
     return [round(xx, 4) for xx in ans.best.x], ans.best.f
 
@@ -133,13 +133,11 @@ if __name__ == '__main__':
     N = 100000
     cv = 0.5
     alfa = 0.2
-    budget = 100
+    budget = 10
 
-    for alpha in [0.5]:
+    for alfa in [0.5, 0.1]:
         dv_opt, f_opt = optimization()
 
-        print("opt_____________________")
+        print(alfa, cv, '_____________')
         print(dv_opt, f_opt)
-        print()
-
         simulation(dv_opt)
