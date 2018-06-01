@@ -28,6 +28,7 @@ for each alpha,
 """
 
 import cma
+import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -98,36 +99,29 @@ def optimization():
     # print(ans2)
 
 
-def simulation(dv):
-    var_a, cvar_a, f = cvar_obj(dv, simu=True)
+def plot_hist(var_a, cvar_a, f):
+    fig = plt.figure()
+    fig.suptitle('bold figure suptitle', fontsize=14, fontweight='bold')
 
-    print("alfa=%6.3f,   var_a=%6.3f,   cvar_a=%6.3f,   f: len:%i  mean:%6.3f  std:%6.3f  " % (
-    alfa, var_a, cvar_a, len(f), np.mean(f), np.std(f)))
+    ax = fig.add_subplot(111)
+    fig.subplots_adjust(top=0.85)
+    ax.set_title('axes title')
 
-    # fig = plt.figure()
-    # fig.suptitle('bold figure suptitle', fontsize=14, fontweight='bold')
-    #
-    # ax = fig.add_subplot(111)
-    # fig.subplots_adjust(top=0.85)
-    # ax.set_title('axes title')
-    #
-    # ax.set_xlabel('Z')
-    # ax.set_ylabel('Frequency')
-    #
-    # # ax.text(3, 8, 'boxed italics text in data coords', style='italic',
-    # #         bbox={'facecolor':'red', 'alpha':0.5, 'pad':10})
-    #
-    # ax.text(var_a, -12, r'$VaR_a$', fontsize=10)
-    # ax.text(cvar_a-4, -12, r'$CVaR_a$', fontsize=10)
-    #
-    #
-    #
-    # plt.hist(f)
-    # plt.scatter([var_a, cvar_a], [0, 0], c='r')
-    #
-    # plt.xlabel("")
-    # plt.ylabel("")
-    # plt.show()
+    ax.set_xlabel('Z')
+    ax.set_ylabel('Frequency')
+
+    # ax.text(3, 8, 'boxed italics text in data coords', style='italic',
+    #         bbox={'facecolor':'red', 'alpha':0.5, 'pad':10})
+
+    ax.text(var_a, -12, r'$VaR_a$', fontsize=10)
+    ax.text(cvar_a - 4, -12, r'$CVaR_a$', fontsize=10)
+
+    plt.hist(f)
+    plt.scatter([var_a, cvar_a], [0, 0], c='r')
+
+    plt.xlabel("")
+    plt.ylabel("")
+    plt.show()
 
 if __name__ == '__main__':
     N = 100000
@@ -135,9 +129,21 @@ if __name__ == '__main__':
     alfa = 0.2
     budget = 10
 
-    for alfa in [0.5, 0.1]:
+    means_res = []
+    std_res = []
+
+    for alfa in [0.05, 0.1, 0.15, 0.2, 0.25]:
         dv_opt, f_opt = optimization()
 
-        print(alfa, cv, '_____________')
-        print(dv_opt, f_opt)
-        simulation(dv_opt)
+        # print(alfa, cv, '_____________')
+        # print(dv_opt, f_opt)
+        var_a, cvar_a, f = cvar_obj(dv_opt, simu=True)
+
+        print("cv=%4.2f, alfa=%6.3f, var_a=%6.3f, cvar_a=%6.3f, len:%i mean:%6.3f std:%6.3f" % (
+            cv, alfa, var_a, cvar_a, len(f), np.mean(f), np.std(f)), dv_opt, f_opt)
+
+        means_res.append(np.mean(f))
+        std_res.append(np.std(f))
+
+    plt.scatter(x=means_res, y=std_res)
+    plt.show()
