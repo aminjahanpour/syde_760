@@ -134,19 +134,18 @@ if __name__ == '__main__':
 
     N = 100000
     cv = 0.5
-    alfa = 0.2
-    budget = 10
+    budget = 1000
 
     means_res = []
     std_res = []
 
-    for alfa in [0.05, 0.1]:
+    for alfa in [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4,0.45,0.5]:
         dv_opt, f_opt = optimization()
 
         var_a, cvar_a, f = cvar_obj(dv_opt, simu=True)
 
-        x = np.mean(f)
-        y = np.std(f)
+        x = np.std(f)
+        y = np.mean(f)
 
         print("cv=%4.2f, alfa=%6.3f, var_a=%6.3f, cvar_a=%6.3f, len:%i mean:%6.3f std:%6.3f" % (
             cv, alfa, var_a, cvar_a, len(f), x, y), dv_opt, f_opt)
@@ -158,5 +157,7 @@ if __name__ == '__main__':
 
         plt.scatter(x=x, y=y)
 
+    plt.xlabel("std")
+    plt.ylabel("mean")
 
     plt.show()
