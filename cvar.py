@@ -33,7 +33,8 @@ fixed settings
 """
 N = 100000
 cv = 1.0
-budget = 1000
+optimization_budget = 1000
+
 """
 fixed inflow realizations
 """
@@ -99,16 +100,16 @@ def optimization():
     """
     CMA optimization method
     """
-    es = cma.CMAEvolutionStrategy(initial_solution, 0.5, {'bounds': [0, 6]})
-    ans = es.optimize(cvar_obj, maxfun=budget, verb_disp=0)
-    return [round(xx, 2) for xx in ans.best.x], round(ans.best.f, 2)
+    # es = cma.CMAEvolutionStrategy(initial_solution, 0.5, {'bounds': [0, 6]})
+    # ans = es.optimize(cvar_obj, maxfun=optimization_budget, verb_disp=0)
+    # return [round(xx, 2) for xx in ans.best.x], round(ans.best.f, 2)
 
     """
     Simplex optimization method
     """
-    # ans = NelderMeadSimplexSearch.minimize(cvar_obj, initial_solution, max_iterations=budget, bounds=bnds, disp=False)
-    #
-    # return [round(xx, 2) for xx in ans.x], round(ans.fun, 2)
+    ans = NelderMeadSimplexSearch.minimize(cvar_obj, initial_solution, max_iterations=budget, bounds=bnds, disp=False)
+
+    return [round(xx, 2) for xx in ans.x], round(ans.fun, 2)
 
 
 
