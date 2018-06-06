@@ -20,8 +20,6 @@ Your method is simulation-optimization and the minimum number of scenarios expec
 
 """
 
-
-import cma
 import matplotlib.pyplot as plt
 import numpy as np
 from dfoalgos.simplex import NelderMeadSimplexSearch
@@ -107,7 +105,8 @@ def optimization():
     """
     Simplex optimization method
     """
-    ans = NelderMeadSimplexSearch.minimize(cvar_obj, initial_solution, max_iterations=budget, bounds=bnds, disp=False)
+    ans = NelderMeadSimplexSearch.minimize(cvar_obj, initial_solution, max_iterations=optimization_budget, bounds=bnds,
+                                           disp=False)
 
     return [round(xx, 2) for xx in ans.x], round(ans.fun, 2)
 
